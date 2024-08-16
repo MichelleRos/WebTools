@@ -18,6 +18,7 @@ async function get_dir_then_load() {
     document.getElementById("reload").disabled = dirHandle == null
 }
 
+var logs
 async function load_from_dir() {
     if (dirHandle == null) {
         return
@@ -106,7 +107,7 @@ async function load_from_dir() {
         return logs
     }
 
-    let logs = await get_logs()
+    logs = await get_logs()
 
     setup_table(logs)
 
@@ -114,6 +115,31 @@ async function load_from_dir() {
     console.log(`Loaded ${Object.values(logs).length} logs in: ${end - start} ms`);
     progress.parentElement.hidden = true
 
+}
+
+function download_csv() {
+
+    // const rows = [
+    //     ["name1", "city1", "some other info"],
+    //     ["name2", "city2", "more info"]
+    // ];
+    
+    let csvContent = "data:text/csv;charset=utf-8,";
+    
+    // logs.forEach(function(rowArray) {
+    //     let row = rowArray.join(",");
+    //     csvContent += row + "\r\n";
+    // });
+
+    csvContent += "Name, Size (MB), Flight Time (min), Distance Traveled (m), Latitude, Longitude, Altitude (m AMSL), Relative Path\r\n";
+    for (const log of Object.values(logs)) {
+        let name = log.info.name.replace(/,/g, ";");
+        let path = log.info.rel_path.replace(/,/g, ";");
+        csvContent += name + ", " + (log.info.size)/(1024*1024) + ", " + (log.info.flight_time)/60.0 + ", " + log.info.distance_traveled + ", " + (log.info.start_lat)*1e-7 + ", " + (log.info.start_lng)*1e-7 + ", " + log.info.start_alt + ", " + path + "\r\n";
+    }
+
+    var encodedUri = encodeURI(csvContent);
+    window.open(encodedUri)
 }
 
 let tables = []
@@ -679,14 +705,17 @@ function load_log(log_file) {
         }
     }
 
+    let lat
+    let lng
+    let alt
     // Calculate distance traveled
     let distance_traveled = null
     if ('POS' in log.messageTypes) {
         distance_traveled = 0
 
-        const lat = log.get('POS', 'Lat')
-        const lng = log.get('POS', 'Lng')
-        const alt = log.get('POS', 'Alt')
+        lat = log.get('POS', 'Lat')
+        lng = log.get('POS', 'Lng')
+        alt = log.get('POS', 'Alt')
 
         function diff_longitude(lon1, lon2) {
             let dlon = lon1-lon2
@@ -714,6 +743,9 @@ function load_log(log_file) {
             distance_traveled += Math.sqrt(x**2 + y**2 + z**2)
         }
     }
+    let start_lat = lat[1]
+    let start_lng = lng[1]
+    let start_alt = alt[1]
 
     return {
         size: log_file.byteLength,
@@ -727,6 +759,9 @@ function load_log(log_file) {
         params,
         time_stamp,
         flight_time,
+        start_lat,
+        start_lng,
+        start_alt,
         watchdog,
         crash_dump,
         distance_traveled,
