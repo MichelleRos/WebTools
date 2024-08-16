@@ -131,11 +131,9 @@ function download_csv() {
     //     csvContent += row + "\r\n";
     // });
 
-    csvContent += "Name, Size (MB), Flight Time (min), Distance Traveled (m), Latitude, Longitude, Altitude (m AMSL), Relative Path\r\n";
+    csvContent += "Board, Name, Size (MB), Firmware, Flight Time (min), Distance Traveled (m), Latitude, Longitude, Altitude (m AMSL), Relative Path\r\n";
     for (const log of Object.values(logs)) {
-        let name = log.info.name.replace(/,/g, ";");
-        let path = log.info.rel_path.replace(/,/g, ";");
-        csvContent += name + ", " + (log.info.size)/(1024*1024) + ", " + (log.info.flight_time)/60.0 + ", " + log.info.distance_traveled + ", " + (log.info.start_lat)*1e-7 + ", " + (log.info.start_lng)*1e-7 + ", " + log.info.start_alt + ", " + path + "\r\n";
+        csvContent += log.info.fc_string + ", " + log.info.name.replace(/,/g, ";") + ", " + (log.info.size)/(1024*1024) + ", " + log.info.fw_string + ", " + (log.info.flight_time)/60.0 + ", " + (log.info.distance_traveled)*1 + ", " + (log.info.start_lat)*1e-7 + ", " + (log.info.start_lng)*1e-7 + ", " + (log.info.start_alt)*1 + ", " + log.info.rel_path.replace(/,/g, ";") + "\r\n";
     }
 
     var encodedUri = encodeURI(csvContent);
@@ -708,6 +706,9 @@ function load_log(log_file) {
     let lat
     let lng
     let alt
+    let start_lat = null
+    let start_lng = null
+    let start_alt = null
     // Calculate distance traveled
     let distance_traveled = null
     if ('POS' in log.messageTypes) {
@@ -742,10 +743,11 @@ function load_log(log_file) {
 
             distance_traveled += Math.sqrt(x**2 + y**2 + z**2)
         }
+
+        start_lat = lat[1]
+        start_lng = lng[1]
+        start_alt = alt[1]
     }
-    let start_lat = lat[1]
-    let start_lng = lng[1]
-    let start_alt = alt[1]
 
     return {
         size: log_file.byteLength,
