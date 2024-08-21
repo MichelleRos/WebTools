@@ -122,15 +122,36 @@ function download_csv() {
     let csvContent = "data:text/csv;charset=utf-8,";
     csvContent += "Board, Name, Size (MB), Firmware, Flight Time (min), Distance Traveled (m), Latitude, Longitude, Altitude (m AMSL), Relative Path\r\n";
     for (const log of Object.values(logs)) {
+        let flight_time = log.info.flight_time/60.0;
+        if (flight_time == 0){
+            flight_time = "";
+        }
+        let distance_traveled = log.info.distance_traveled;
+        if (distance_traveled == null){
+            distance_traveled = "";
+        }
+        let start_lat = (log.info.start_lat)*1e-7;
+        if (start_lat == 0){
+            start_lat = "";
+        }
+        let start_lng = (log.info.start_lng)*1e-7;
+        if (start_lng == 0){
+            start_lng = "";
+        }
+        let start_alt = log.info.start_alt;
+        if (start_alt == null){
+            start_alt = "";
+        }
+
         csvContent +=   log.info.fc_string + ", " + 
                         log.info.name.replace(/,/g, ";") + ", " + 
                         (log.info.size)/(1024*1024) + ", " + 
                         log.info.fw_string + ", " + 
-                        (log.info.flight_time)/60.0 + ", " + 
-                        (log.info.distance_traveled)*1 + ", " + 
-                        (log.info.start_lat)*1e-7 + ", " + 
-                        (log.info.start_lng)*1e-7 + ", " + 
-                        (log.info.start_alt)*1 + ", " + 
+                        flight_time + ", " + 
+                        distance_traveled + ", " + 
+                        start_lat + ", " + 
+                        start_lng + ", " + 
+                        start_alt + ", " + 
                         log.info.rel_path.replace(/,/g, ";") + "\r\n";
     }
     var encodedUri = encodeURI(csvContent);
