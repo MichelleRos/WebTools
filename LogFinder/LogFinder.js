@@ -165,8 +165,8 @@ function setup_table(logs) {
     let boards = {}
     for (const log of Object.values(logs)) {
         let key = "Unknown"
-        if (log.info.fc_string != null) {
-            key = log.info.fc_string
+        if (log.info.hw_id != null) {
+            key = log.info.hw_id
         }
         if (!(key in boards)) {
             boards[key] = []
@@ -588,6 +588,7 @@ function setup_table(logs) {
                 },
                 { title: "Name", field: "info.name", formatter:name_format },
                 { title: "Size", field: "info.size", formatter:size_format, bottomCalc:size_bottom_calc, bottomCalcFormatter:size_format, width: 90 },
+                { title: "Board name", field:"info.board_name_s" },
                 { title: "Firmware Version", field:"info.fw_string" },
                 { title: "Flight Time", field:"info.flight_time", formatter:flight_time_format, bottomCalc:flight_time_bottom_calc, bottomCalcFormatter:flight_time_format, width: 105 },
                 { title: "Flight distance", field:"info.distance_traveled", formatter:distance_format, bottomCalc:"sum", bottomCalcFormatter:get_dist_string, width: 125 },
@@ -767,6 +768,9 @@ function load_log(log_file) {
         start_alt = alt[1]
     }
 
+    const arr = version.flight_controller.split(" ");
+    const board_name_s = arr[0];
+    const hw_id = arr.slice(1).join(" ");
     return {
         size: log_file.byteLength,
         fw_string: version.fw_string,
@@ -775,6 +779,8 @@ function load_log(log_file) {
         fc_string: version.flight_controller,
         os_string: version.os_string,
         board_name,
+        board_name_s,
+        hw_id,
         build_type: version.build_type,
         params,
         time_stamp,
