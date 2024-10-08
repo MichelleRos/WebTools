@@ -490,11 +490,11 @@ function setup_table(logs) {
             if (dist_m == null) {
                 return "-"
             }
-            if (dist_m < 2000) {
-                return dist_m.toFixed(2) + " m"
-            }
+            // if (dist_m < 2000) {
+            //     return dist_m.toFixed(2) + " m"
+            // }
             const dist_km = dist_m / 1000.0
-            return dist_km.toFixed(2) + " km"
+            return dist_km.toFixed(3) + " km"
         }
 
         function distance_format(cell, formatterParams, onRendered) {
