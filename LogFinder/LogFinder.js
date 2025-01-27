@@ -716,17 +716,19 @@ function load_log(log_file) {
     let params = {}
     let start_flight_time
     let end_flight_time
-    for (let i = 0; i < PARM.Name.length; i++) {
-        const name = PARM.Name[i]
-        const value = PARM.Value[i]
-        params[name] = value
+    if (PARM != null){
+        for (let i = 0; i < PARM.Name.length; i++) {
+            const name = PARM.Name[i]
+            const value = PARM.Value[i]
+            params[name] = value
 
-        // Check for cumulative flight time, get first and last value
-        if (name == "STAT_FLTTIME") {
-            if (start_flight_time == null) {
-                start_flight_time = value
+            // Check for cumulative flight time, get first and last value
+            if (name == "STAT_FLTTIME") {
+                if (start_flight_time == null) {
+                    start_flight_time = value
+                }
+                end_flight_time = value
             }
-            end_flight_time = value
         }
     }
 
