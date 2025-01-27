@@ -773,9 +773,14 @@ function load_log(log_file) {
         start_alt = alt[1]
     }
 
-    const arr = version.flight_controller.split(" ");
-    const board_name_s = arr[0];
-    const hw_id = arr.slice(1).join(" ");
+    let arr
+    let board_name_s
+    let hw_id
+    if (version.flight_controller != null) { //Protect against weird read error.
+        arr = version.flight_controller.split(" ");
+        board_name_s = arr[0];
+        hw_id = arr.slice(1).join(" ");
+    }
     return {
         size: log_file.byteLength,
         fw_string: version.fw_string,
