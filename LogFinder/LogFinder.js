@@ -44,9 +44,14 @@ async function load_from_dir() {
             }
             if (entry.kind === "file") {
                 const file = await entry.getFile()
-                if ((file !== null) && (file.name.toLowerCase().endsWith(".bin"))) {
-                    file.relativePath = relativePath
-                    yield file
+                if (file !== null) {
+                    console.log("file is "+file.name)
+                    // const filename = file.name//file.split('\\').pop().split('/').pop();
+                    const filename_start = file.name.substring(0,4)
+                    if ((file.name.toLowerCase().endsWith(".bin")) && !(filename_start == "IMG_" || filename_start == "SIYI")) {
+                        file.relativePath = relativePath
+                        yield file
+                    }
                 }
             } else if (entry.kind === "directory") {
                 for await (const handle of entry.values()) {
