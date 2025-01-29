@@ -127,7 +127,7 @@ async function load_from_dir() {
 function download_csv() {
     
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Board, Name, Size (MB), Firmware, Flight Time (min), Distance Traveled (m), Latitude, Longitude, Altitude (m AMSL), Relative Path\r\n";
+    csvContent += "HW ID, Board, Name, Size (MB), Firmware, Flight Time (min), Distance Traveled (m), Latitude, Longitude, Altitude (m AMSL), Relative Path\r\n";
     for (const log of Object.values(logs)) {
         let flight_time = log.info.flight_time/60.0;
         if (flight_time == 0){
@@ -150,7 +150,8 @@ function download_csv() {
             start_alt = "";
         }
 
-        csvContent +=   log.info.fc_string + ", " + 
+        csvContent +=   log.info.hw_id + ", " +
+                        log.info.board_name_s + ", " + 
                         log.info.name.replace(/,/g, ";").replace(/#/g, "(hash)") + ", " + 
                         (log.info.size)/(1024*1024) + ", " + 
                         log.info.fw_string + ", " + 
