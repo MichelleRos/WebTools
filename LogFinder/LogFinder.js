@@ -45,12 +45,14 @@ async function load_from_dir() {
             if (entry.kind === "file") {
                 const file = await entry.getFile()
                 if (file !== null) {
-                    console.log("file is "+file.name)
                     // const filename = file.name//file.split('\\').pop().split('/').pop();
                     const filename_start = file.name.substring(0,4)
                     if ((file.name.toLowerCase().endsWith(".bin")) && !(filename_start == "IMG_" || filename_start == "SIYI")) {
+                        console.log("loading file "+file.name)
                         file.relativePath = relativePath
                         yield file
+                    } else {
+                        console.log("skipping file "+file.name)
                     }
                 }
             } else if (entry.kind === "directory") {
