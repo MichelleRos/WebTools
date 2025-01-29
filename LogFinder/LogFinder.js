@@ -149,7 +149,7 @@ function download_csv() {
         }
 
         csvContent +=   log.info.fc_string + ", " + 
-                        log.info.name.replace(/,/g, ";") + ", " + 
+                        log.info.name.replace(/,/g, ";").replace(/#/g, "(hash)") + ", " + 
                         (log.info.size)/(1024*1024) + ", " + 
                         log.info.fw_string + ", " + 
                         flight_time + ", " + 
@@ -157,7 +157,7 @@ function download_csv() {
                         start_lat + ", " + 
                         start_lng + ", " + 
                         start_alt + ", " + 
-                        log.info.rel_path.replace(/,/g, ";") + "\r\n";
+                        log.info.rel_path.replace(/,/g, ";").replace(/#/g, "(hash)") + "\r\n";
     }
     var encodedUri = encodeURI(csvContent);
     window.open(encodedUri)
